@@ -33,3 +33,6 @@ audit/
 
 # Real Langfuse trace URLs/ids from sample runs (private project)
 SAMPLE_RUN.traces.local.md
+
+# Local helper: GitHub 'About' description (not part of the repo)
+GITHUB_DESCRIPTION.txt
