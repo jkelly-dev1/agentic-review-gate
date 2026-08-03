@@ -210,6 +210,23 @@ tests/            pytest suite (security, graph, evals, audit, output validation
 infra/main.bicep  Azure Container Apps IaC (not deployed; see infra/README.md)
 ```
 
+## Sibling projects
+
+One of several small projects on the theme of AI systems you can trust and
+prove, all following the same discipline of claims mapped to tests, mutation
+checks on the tests that matter, and behavior verified before publishing:
+
+- [prompt-injection-benchmark](https://github.com/jkelly-dev1/prompt-injection-benchmark) measures
+  defenses against a synthetic attack corpus rather than asserting them.
+- [ai-data-boundary-proxy](https://github.com/jkelly-dev1/ai-data-boundary-proxy) enforces PII
+  egress policy and measures what a right-to-erasure operation misses.
+- [llm-eval-gate](https://github.com/jkelly-dev1/llm-eval-gate) measures the
+  judges rather than trusting them.
+- [least-privilege-agent](https://github.com/jkelly-dev1/least-privilege-agent)
+- [citation-abstention-rag](https://github.com/jkelly-dev1/citation-abstention-rag)
+- [typed-agent-service](https://github.com/jkelly-dev1/typed-agent-service)
+- [temporal-multi-agent](https://github.com/jkelly-dev1/temporal-multi-agent)
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
