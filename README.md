@@ -222,6 +222,9 @@ checks on the tests that matter, and behavior verified before publishing:
   egress policy and measures what a right-to-erasure operation misses.
 - [llm-eval-gate](https://github.com/jkelly-dev1/llm-eval-gate) measures the
   judges rather than trusting them.
+- [federated-retrieval-router](https://github.com/jkelly-dev1/federated-retrieval-router)
+  measures whether a routing decision was right and what it cost, and then
+  measures its own hand-rolled stores against real ones.
 - [least-privilege-agent](https://github.com/jkelly-dev1/least-privilege-agent)
 - [citation-abstention-rag](https://github.com/jkelly-dev1/citation-abstention-rag)
 - [typed-agent-service](https://github.com/jkelly-dev1/typed-agent-service)
