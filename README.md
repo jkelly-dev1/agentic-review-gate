@@ -225,6 +225,10 @@ checks on the tests that matter, and behavior verified before publishing:
 - [federated-retrieval-router](https://github.com/jkelly-dev1/federated-retrieval-router)
   measures whether a routing decision was right and what it cost, and then
   measures its own hand-rolled stores against real ones.
+- [hardened-mcp-server](https://github.com/jkelly-dev1/hardened-mcp-server)
+  measures which bytes a tool-definition pin has to cover, and finds the
+  intuitive policy catching 1 of 8 rug pulls with a perfectly clean
+  false-alarm record: a quiet gate that has stopped protecting anything.
 - [least-privilege-agent](https://github.com/jkelly-dev1/least-privilege-agent)
 - [citation-abstention-rag](https://github.com/jkelly-dev1/citation-abstention-rag)
 - [typed-agent-service](https://github.com/jkelly-dev1/typed-agent-service)
