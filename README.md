@@ -229,6 +229,11 @@ checks on the tests that matter, and behavior verified before publishing:
   measures which bytes a tool-definition pin has to cover, and finds the
   intuitive policy catching 1 of 8 rug pulls with a perfectly clean
   false-alarm record: a quiet gate that has stopped protecting anything.
+- [vlm-extraction-integrity](https://github.com/jkelly-dev1/vlm-extraction-integrity)
+  is the opposite failure of the same gate. Its pixel-grounding rung rejects
+  0 of 40 correct extractions on three models and 31 of 36 on a fourth, which
+  cites a field's caption instead of its value. Catch rate is the number
+  people quote; the false-rejection rate is what decides whether it ships.
 - [least-privilege-agent](https://github.com/jkelly-dev1/least-privilege-agent)
 - [citation-abstention-rag](https://github.com/jkelly-dev1/citation-abstention-rag)
 - [typed-agent-service](https://github.com/jkelly-dev1/typed-agent-service)
