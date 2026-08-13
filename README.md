@@ -234,10 +234,19 @@ checks on the tests that matter, and behavior verified before publishing:
   0 of 40 correct extractions on three models and 31 of 36 on a fourth, which
   cites a field's caption instead of its value. Catch rate is the number
   people quote; the false-rejection rate is what decides whether it ships.
+- [ai-compliance-checker](https://github.com/jkelly-dev1/ai-compliance-checker)
+  builds the gate this repo argues for and then measures its price across five
+  unrelated regimes: a checker that always answers is wrong 15-36% of the
+  time, and one that refuses when the evidence cannot carry a decision is
+  never wrong and still decides 13-50%. Those are not two points on one scale,
+  so it publishes no accuracy figure at all.
 - [least-privilege-agent](https://github.com/jkelly-dev1/least-privilege-agent)
 - [citation-abstention-rag](https://github.com/jkelly-dev1/citation-abstention-rag)
 - [typed-agent-service](https://github.com/jkelly-dev1/typed-agent-service)
 - [temporal-multi-agent](https://github.com/jkelly-dev1/temporal-multi-agent)
+- [llm-observability-stack](https://github.com/jkelly-dev1/llm-observability-stack)
+- [airgapped-ai-bundle](https://github.com/jkelly-dev1/airgapped-ai-bundle)
+- [agent-sandbox-escape](https://github.com/jkelly-dev1/agent-sandbox-escape)
 
 ## License
 
