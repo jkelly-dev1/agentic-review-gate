@@ -247,6 +247,7 @@ checks on the tests that matter, and behavior verified before publishing:
 - [llm-observability-stack](https://github.com/jkelly-dev1/llm-observability-stack)
 - [airgapped-ai-bundle](https://github.com/jkelly-dev1/airgapped-ai-bundle)
 - [agent-sandbox-escape](https://github.com/jkelly-dev1/agent-sandbox-escape)
+- [parser-eval](https://github.com/jkelly-dev1/parser-eval)
 
 ## License
 
