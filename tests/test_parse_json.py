@@ -2,7 +2,7 @@
 
 A live run against a real model (Opus 4.8) exposed that a bare `json.loads()`
 failed whenever the model wrapped its JSON in markdown fences or surrounding
-prose — the deterministic mock never did, so no offline test caught it. These
+prose -- the deterministic mock never did, so no offline test caught it. These
 cases pin the tolerant behavior so a future edit can't silently reintroduce that
 "(no draft)" failure.
 """

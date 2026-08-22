@@ -25,32 +25,32 @@ when the matching API key is set.
 ```
    GitHub PR/issue                                          GitHub
    webhook (signed)                                         comment
-        │                                                      ▲
-        ▼                                                      │ post-back
-  ┌───────────────────────────── FastAPI (app/main.py) ───────┴──────────────┐
-  │  POST /webhooks/github   HMAC-SHA256 verify + replay guard + rate limit   │
-  │  POST /reviews/{id}/approve   human-in-the-loop decision (resume)         │
-  │  GET  /reviews/{id}   status + trace     GET /healthz   GET /metrics       │
-  └───────────────────────────────────┬──────────────────────────────────────┘
-                                       │ start / resume
-                                       ▼
-        ┌──────────────── LangGraph StateGraph (app/graph.py) ───────────────┐
-        │  plan ─▶ retrieve ─▶ draft ─▶ critique ─┐                           │
-        │                        ▲                │ eval fails & attempts<max │
-        │                        └────────────────┘  (retry / guardrail)      │
-        │                                 │ eval ok / capped                   │
-        │                                 ▼                                    │
-        │                          await_approval                             │
-        │                                 ┆  ⏸  interrupt_before=[finalize]    │
-        │                                 ▼         (human-in-the-loop gate)   │
-        │                            finalize ──▶ post-back + audit write      │
-        └──────────┬───────────────────────────────────────────┬─────────────┘
-                   │                                            │
-                   ▼                                            ▼
+        |                                                      ^
+        v                                                      | post-back
+  +----------------------------- FastAPI (app/main.py) -------+--------------+
+  |  POST /webhooks/github   HMAC-SHA256 verify + replay guard + rate limit   |
+  |  POST /reviews/{id}/approve   human-in-the-loop decision (resume)         |
+  |  GET  /reviews/{id}   status + trace     GET /healthz   GET /metrics       |
+  +-----------------------------------+--------------------------------------+
+                                       | start / resume
+                                       v
+        +---------------- LangGraph StateGraph (app/graph.py) ---------------+
+        |  plan -> retrieve -> draft -> critique -+                           |
+        |                        ^                | eval fails & attempts<max |
+        |                        +----------------+  (retry / guardrail)      |
+        |                                 | eval ok / capped                   |
+        |                                 v                                    |
+        |                          await_approval                             |
+        |                                 :  [||] interrupt_before=[finalize]   |
+        |                                 v         (human-in-the-loop gate)   |
+        |                            finalize --> post-back + audit write      |
+        +----------+-------------------------------------------+-------------+
+                   |                                            |
+                   v                                            v
    retrieval.py (TF-cosine over            audit.py (append-only JSONL,
-   data/corpus/*.md, cited by id)          hash-chained → verify_chain())
-                   │                                            
-                   ▼                                            
+   data/corpus/*.md, cited by id)          hash-chained -> verify_chain())
+                   |                                            
+                   v                                            
    tracing.py (Langfuse spans when configured, else offline no-op with timing)
 ```
 
@@ -58,9 +58,9 @@ when the matching API key is set.
 
 | Capability | Where it lives | Backed by |
 |---|---|---|
-| LangGraph agentic workflow (state, retries, guardrails) | `app/graph.py` (`plan→retrieve→draft→critique→await_approval→finalize`, `interrupt_before`) | `tests/test_graph.py` |
+| LangGraph agentic workflow (state, retries, guardrails) | `app/graph.py` (`plan->retrieve->draft->critique->await_approval->finalize`, `interrupt_before`) | `tests/test_graph.py` |
 | Output validation | Pydantic models validated at every node | `tests/test_output_validation.py`, `tests/test_graph.py::test_malformed_draft_fails_closed` |
-| Retry / guardrail behavior | critique→draft loop capped at `MAX_ATTEMPTS` | `tests/test_graph.py::test_retry_path_recovers_a_weak_first_draft`, `::test_guardrail_caps_retries` |
+| Retry / guardrail behavior | critique->draft loop capped at `MAX_ATTEMPTS` | `tests/test_graph.py::test_retry_path_recovers_a_weak_first_draft`, `::test_guardrail_caps_retries` |
 | Human-in-the-loop (regulated approval) | `interrupt_before=["finalize"]` + `/reviews/{id}/approve` | `tests/test_graph.py::test_resume_approve_finalizes`, `::test_reject_stops` |
 | Secure GitHub webhook (HMAC + replay) | `app/security.py` | `tests/test_security.py` |
 | Prompt versioning (prompt-as-asset) | `app/prompts/*.md` + `app/prompts.py` `PromptRegistry` | recorded in every `TraceRecord`; used by evals |
@@ -131,7 +131,7 @@ pytest -q          # 34 tests
 python -m app.evals.gate          # exits non-zero if pass rate < threshold
 ```
 
-**End-to-end demo** (signed webhook → workflow → HITL approval → audit record):
+**End-to-end demo** (signed webhook -> workflow -> HITL approval -> audit record):
 
 ```bash
 python scripts/run_demo.py
@@ -176,18 +176,36 @@ Three seams are meant to be swapped:
 
 The webhook source and the model provider are already pluggable.
 
-## Claims are backed by tests
+## Claims backed by tests
 
-Every capability the README claims is either exercised by a test in `tests/` or
-labeled above as TODO / not-yet-wired. Two are worth calling out because they are
-the easy ones to fake:
+Run `pytest -q`. The suite is offline: it needs no API key and no network, and
+the deterministic mock provider stands in for a model everywhere.
 
-- **The eval gate is not vacuous.** `tests/test_evals.py` mutates the `draft`
-  prompt asset (removing the instruction to use the retrieved standards), reruns
-  the golden set, and asserts the pass rate drops below threshold, i.e. the gate
-  *would reject* the regression. A gate that passes no matter what proves nothing.
-- **The audit chain actually detects tampering.** `tests/test_audit.py` edits and
-  reorders written records and asserts `verify_chain()` returns `False`.
+| Claim | Test |
+| --- | --- |
+| The eval gate is not vacuous: mutate the draft prompt to drop the retrieved standards and the pass rate falls below threshold | `tests/test_evals.py::test_gate_fails_on_regressed_prompt` |
+| The same gate passes on the unmutated prompts, so the failure above is the mutation and not the harness | `tests/test_evals.py::test_gate_passes_on_good_prompts` |
+| Editing a written record breaks the audit chain | `tests/test_audit.py::test_tampering_breaks_the_chain` |
+| Reordering records breaks it too, which a per-record hash alone would miss | `tests/test_audit.py::test_reordering_breaks_the_chain` |
+| The chain verifies across many records, so the check above is not failing for an unrelated reason | `tests/test_audit.py::test_chain_verifies_for_multiple_records` |
+| The graph pauses for human approval instead of finalizing | `tests/test_graph.py::test_happy_path_pauses_at_approval` |
+| Approving resumes and finalizes; rejecting stops | `tests/test_graph.py::test_resume_approve_finalizes` |
+| A malformed draft fails CLOSED rather than passing something through | `tests/test_graph.py::test_malformed_draft_fails_closed` |
+| A weak first draft is retried and recovered | `tests/test_graph.py::test_retry_path_recovers_a_weak_first_draft` |
+| Retries are capped, so a model that never improves cannot loop forever | `tests/test_graph.py::test_guardrail_caps_retries` |
+| A real model wraps JSON in fences or prose, and the parser survives all of it | `tests/test_parse_json.py::test_fenced_json_with_language_tag_parses` |
+| Prose around the JSON parses; braces inside string values are preserved | `tests/test_parse_json.py::test_prose_wrapped_json_parses` |
+| A reply with no JSON object at all raises rather than returning a default | `tests/test_parse_json.py::test_no_json_object_raises` |
+| An empty, placeholder or invalid-risk draft is rejected by output validation | `tests/test_output_validation.py::test_draft_rejects_placeholder_summary` |
+| A webhook with a valid signature passes and a wrong secret fails | `tests/test_security.py::test_valid_signature_passes` |
+| A tampered body fails, and a non-sha256 scheme is refused | `tests/test_security.py::test_tampered_body_fails` |
+| A replayed delivery id is rejected, so a captured webhook cannot be resent | `tests/test_security.py::test_replayed_delivery_id_is_rejected` |
+
+THE TWO WORTH CALLING OUT are the first three rows, because they are the easy
+ones to fake. A gate that passes no matter what proves nothing, so the eval
+test mutates the prompt asset and requires the gate to REJECT; and an audit
+chain that only hashes each record individually would not notice records being
+reordered, so that is asserted separately.
 
 ## Layout
 

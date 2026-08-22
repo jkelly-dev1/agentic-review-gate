@@ -1,16 +1,16 @@
 # Sample runs
 
-This project is **provider-agnostic** — the same workflow runs on a deterministic
+This project is **provider-agnostic** -- the same workflow runs on a deterministic
 mock, on Anthropic, or on OpenAI, with only the `app/llm.py` provider swapping.
 This file collects a capture from each. Nothing about the orchestration, the HITL
 gate, the eval gate, the traceability schema, or the audit log changes between
 providers; only the drafted analysis and the LLM-judge verdict come from a live
 model instead of the mock.
 
-- **MOCK run** — deterministic, offline, no API key.
-- **Anthropic run** — live `claude-opus-4-8`.
-- **OpenAI run** — live `gpt-4o`.
-- **Langfuse-enabled run** — live Anthropic with real LLM observability: each
+- **MOCK run** -- deterministic, offline, no API key.
+- **Anthropic run** -- live `claude-opus-4-8`.
+- **OpenAI run** -- live `gpt-4o`.
+- **Langfuse-enabled run** -- live Anthropic with real LLM observability: each
   review exports as one trace to a Langfuse project, and the demo prints the
   trace URL.
 
@@ -26,7 +26,7 @@ tamper-evident audit record.
 > The `record_hash` and `review_id` differ per run (random review id, timestamps
 > in the hashed payload); everything else is stable.
 
-## MOCK run — `python scripts/run_demo.py`
+## MOCK run -- `python scripts/run_demo.py`
 
 ```text
 ====================================================================
@@ -79,14 +79,14 @@ record_hash      : daed928b85e81668...
 chain verifies   : True
 
 ====================================================================
-Done — fully offline, deterministic mock provider.
+Done -- fully offline, deterministic mock provider.
 ====================================================================
 ```
 
-## Anthropic run — `AGENT_PROVIDER=anthropic python scripts/run_demo.py`
+## Anthropic run -- `AGENT_PROVIDER=anthropic python scripts/run_demo.py`
 
 Verbatim capture against **`claude-opus-4-8`** (a live `ANTHROPIC_API_KEY`, a few
-cents). Same orchestration, HITL gate, eval gate, and audit chain as the mock —
+cents). Same orchestration, HITL gate, eval gate, and audit chain as the mock --
 only the drafted analysis and the judge verdict are live-model text. The judge
 scored the live draft 0.95; the `review_id` and `record_hash` differ per run.
 
@@ -143,14 +143,14 @@ record_hash      : ff0ef75a84208aa5...
 chain verifies   : True
 
 ====================================================================
-Done — provider: anthropic / claude-opus-4-8
+Done -- provider: anthropic / claude-opus-4-8
 ====================================================================
 ```
 
-## OpenAI run — `AGENT_PROVIDER=openai python scripts/run_demo.py`
+## OpenAI run -- `AGENT_PROVIDER=openai python scripts/run_demo.py`
 
 Verbatim capture against **`gpt-4o`**, with Langfuse also active. Identical
-orchestration, HITL gate, eval gate, and audit chain to the Anthropic run — only
+orchestration, HITL gate, eval gate, and audit chain to the Anthropic run -- only
 the provider and the live-model text differ. The two vendors reach comparable but
 not identical verdicts (exact findings/risk/score vary per run since the models
 are non-deterministic), which is exactly the point of a provider-agnostic,
@@ -216,16 +216,16 @@ langfuse active  : True
 trace url        : https://us.cloud.langfuse.com/project/<your-project>/traces/<trace-id>
 
 ====================================================================
-Done — provider: openai / gpt-4o
+Done -- provider: openai / gpt-4o
 ====================================================================
 ```
 
-## Langfuse-enabled run — live Anthropic + real observability
+## Langfuse-enabled run -- live Anthropic + real observability
 
 Same command, with `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` /
 `LANGFUSE_HOST` set (US region). `langfuse active` is now **True**, and the run
 prints a real trace URL. Each review exports as one Langfuse trace whose spans
-are `plan → retrieve → draft → critique → finalize` (verified by fetching the
+are `plan -> retrieve -> draft -> critique -> finalize` (verified by fetching the
 trace back from the Langfuse API). The trace URL below is redacted (see
 "A note on the trace URLs").
 
@@ -288,7 +288,7 @@ langfuse active  : True
 trace url        : https://us.cloud.langfuse.com/project/<your-project>/traces/<trace-id>
 
 ====================================================================
-Done — provider: anthropic / claude-opus-4-8
+Done -- provider: anthropic / claude-opus-4-8
 ====================================================================
 ```
 

@@ -20,7 +20,7 @@ def test_happy_path_pauses_at_approval(tmp_path, state):
     assert paused.draft is not None
     assert paused.eval_result is not None and paused.eval_result.passed
     assert paused.retrieved  # sources were retrieved for provenance
-    assert paused.output is None  # not finalized yet — the gate is real
+    assert paused.output is None  # not finalized yet -- the gate is real
 
 
 def test_resume_approve_finalizes(tmp_path, state):

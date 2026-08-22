@@ -25,7 +25,7 @@ from pathlib import Path
 # Cosmetic: Starlette's TestClient warns that it uses httpx (harmless, and only
 # relevant to this demo harness, not the app). Silence it so the sample capture
 # stays clean. Must be set before the TestClient import, where it is emitted.
-# Match by message only — the warning is attributed to fastapi.testclient, so a
+# Match by message only -- the warning is attributed to fastapi.testclient, so a
 # module= filter on starlette would miss it.
 warnings.filterwarnings("ignore", message=r".*httpx.*")
 
@@ -44,7 +44,7 @@ from app.tracing import reset_tracer  # noqa: E402
 SECRET = "demo-webhook-secret"
 
 # Braille spinner frames, borrowed from the sibling temporal-multi-agent demo.
-_FRAMES = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"
+_FRAMES = "|/-\\"
 
 
 @contextlib.contextmanager
@@ -70,7 +70,7 @@ def spinner(label: str):
             if stop.is_set():
                 break
             elapsed = time.monotonic() - started
-            sys.stderr.write(f"\r{_FRAMES[i % len(_FRAMES)]} {label}… ({elapsed:.0f}s)\033[K")
+            sys.stderr.write(f"\r{_FRAMES[i % len(_FRAMES)]} {label}... ({elapsed:.0f}s)\033[K")
             sys.stderr.flush()
             time.sleep(0.1)
 
@@ -91,9 +91,9 @@ def _provider_banner(settings: Settings) -> str:
     line = f"Provider: {provider.name} / {provider.model}"
     if provider.name == "mock":
         if settings.anthropic_api_key and settings.agent_provider != "anthropic":
-            line += "  (ANTHROPIC_API_KEY is set — add AGENT_PROVIDER=anthropic to use it)"
+            line += "  (ANTHROPIC_API_KEY is set -- add AGENT_PROVIDER=anthropic to use it)"
         elif settings.openai_api_key and settings.agent_provider != "openai":
-            line += "  (OPENAI_API_KEY is set — add AGENT_PROVIDER=openai to use it)"
+            line += "  (OPENAI_API_KEY is set -- add AGENT_PROVIDER=openai to use it)"
     return line
 
 
@@ -197,7 +197,7 @@ def main() -> int:
     else:
         tracer.flush()  # no-op when offline; harmless
 
-    _banner(f"Done — provider: {rec.provider} / {rec.model}")
+    _banner(f"Done -- provider: {rec.provider} / {rec.model}")
     return 0
 
 

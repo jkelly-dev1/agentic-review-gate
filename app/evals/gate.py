@@ -1,4 +1,4 @@
-"""Eval gate CLI — the thing CI calls.
+"""Eval gate CLI -- the thing CI calls.
 
 Runs the golden set and exits non-zero when the pass rate falls below the
 threshold. This is what turns "we have evals" into "a regression cannot merge".

@@ -5,7 +5,7 @@
 - a **Log Analytics workspace** backing the Container Apps environment,
 - a **Container Apps Environment**,
 - a **user-assigned Managed Identity** that (a) pulls the image from **ACR** via
-  the `AcrPull` role — no registry passwords — and (b) reads secrets from
+  the `AcrPull` role -- no registry passwords -- and (b) reads secrets from
   **Key Vault** via the `Key Vault Secrets User` role (get/list),
 - a **Key Vault** in RBAC mode holding `github-webhook-secret`,
 - the **Container App** itself: external ingress on port 8000, image pulled with

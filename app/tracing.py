@@ -2,7 +2,7 @@
 
 When LANGFUSE_* env is configured, `@traced` / `span()` emit real Langfuse spans
 (the SDK is imported lazily). When it is not, they degrade to a local no-op
-tracer that STILL records step name, timing, and a running duration total — so
+tracer that STILL records step name, timing, and a running duration total -- so
 the traceability story works fully offline and tests can assert on spans. This
 module never raises because Langfuse is absent or misconfigured.
 """
@@ -58,7 +58,7 @@ class LocalTracer:
 class Tracer:
     """Front door. Always holds a LocalTracer; also emits to Langfuse if enabled.
 
-    On the Langfuse path (SDK v3/v4 — OpenTelemetry-based) every node span is
+    On the Langfuse path (SDK v3/v4 -- OpenTelemetry-based) every node span is
     attached to one shared trace_id, so a single review shows up as one trace in
     the Langfuse UI. Spans are batched: call flush() before the process exits so
     they are sent. Any Langfuse failure degrades to the offline local tracer and
@@ -82,7 +82,7 @@ class Tracer:
         try:  # pragma: no cover - only when Langfuse configured + installed
             from langfuse import Langfuse
 
-            # Note: we deliberately do NOT gate on client.auth_check() — it is a
+            # Note: we deliberately do NOT gate on client.auth_check() -- it is a
             # one-shot call that intermittently returns 401 on Langfuse cloud even
             # with valid keys, which would falsely disable tracing. Span export
             # runs through the SDK's batched exporter with its own retry/backoff.

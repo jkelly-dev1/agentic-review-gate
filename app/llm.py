@@ -1,10 +1,10 @@
 """LLM provider seam: one Protocol, three implementations.
 
-- MockProvider  — deterministic, offline. Its output is keyed off the prompt
+- MockProvider  -- deterministic, offline. Its output is keyed off the prompt
   name/content so tests are stable and the eval gate is reproducible.
-- AnthropicProvider — real path. Imports the `anthropic` SDK lazily; selected
+- AnthropicProvider -- real path. Imports the `anthropic` SDK lazily; selected
   when AGENT_PROVIDER=anthropic AND ANTHROPIC_API_KEY is set.
-- OpenAIProvider — real path. Imports the `openai` SDK lazily; selected when
+- OpenAIProvider -- real path. Imports the `openai` SDK lazily; selected when
   AGENT_PROVIDER=openai AND OPENAI_API_KEY is set.
 
 Both real providers are swappable behind the same Protocol, which is the point:
@@ -159,7 +159,7 @@ class AnthropicProvider:
             max_tokens=1500,
             system=(
                 "You are a rigorous engineering-standards reviewer. Respond with "
-                "ONLY strict JSON matching the requested schema — no markdown, no "
+                "ONLY strict JSON matching the requested schema -- no markdown, no "
                 "code fences, no prose before or after the JSON object."
             ),
             messages=[{"role": "user", "content": f"{rendered_prompt}\n\n{context}"}],
@@ -213,7 +213,7 @@ def get_provider(settings: Settings | None = None) -> LLMProvider:
     """Factory: return the provider selected by config.
 
     Defaults to MockProvider. Only returns a real provider when explicitly
-    requested AND its key is present — so a stray AGENT_PROVIDER=anthropic|openai
+    requested AND its key is present -- so a stray AGENT_PROVIDER=anthropic|openai
     without the matching key falls back to mock rather than crashing an offline
     demo.
     """

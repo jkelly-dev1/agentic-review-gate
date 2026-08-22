@@ -2,7 +2,7 @@
 
 Deliberately dependency-free: a TF cosine scorer over the in-repo corpus, NOT a
 vector DB. It returns top-k chunks with scores and source ids so the analysis
-can cite provenance. The scorer is the swappable seam — replace `score_chunks`
+can cite provenance. The scorer is the swappable seam -- replace `score_chunks`
 with an embedding search / vector store without touching the graph.
 """
 

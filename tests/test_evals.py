@@ -15,7 +15,7 @@ from app.prompts import PROMPTS_DIR, PromptRegistry
 def _mutated_registry(tmp_path: Path) -> PromptRegistry:
     """Copy the prompt assets and regress draft.v1 by deleting the instruction
     to use the retrieved STANDARDS. The mock draft goes vague/uncited as a
-    result, so the judge fails it — exactly the class of regression the gate
+    result, so the judge fails it -- exactly the class of regression the gate
     exists to catch."""
     dst = Path(tempfile.mkdtemp(dir=tmp_path)) / "prompts"
     shutil.copytree(PROMPTS_DIR, dst)

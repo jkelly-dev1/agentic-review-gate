@@ -3,7 +3,7 @@
 // Demonstrates the pattern: a Container App pulls its image from ACR using a
 // user-assigned Managed Identity (no registry passwords), secrets live in Key
 // Vault and are surfaced as Key Vault-referenced secrets, and ingress fronts
-// the FastAPI app. See infra/README.md — this IaC has NOT been deployed to a
+// the FastAPI app. See infra/README.md -- this IaC has NOT been deployed to a
 // live subscription.
 
 @description('Deployment location.')

@@ -257,7 +257,7 @@ def build_graph(
     """Compile the review StateGraph. Pauses before `finalize` for HITL approval.
 
     When `provider` is omitted, it is selected from `settings` (falling back to
-    the global settings), so the caller's Settings — not just process env — drives
+    the global settings), so the caller's Settings -- not just process env -- drives
     which LLM provider runs.
     """
     settings = settings or get_settings()
