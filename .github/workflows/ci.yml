@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel an in-flight run when the same branch is pushed again.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      # Pinned to current majors (verified 2026-07-21, matches the
+      # CI-green temporal-multi-agent repo): checkout v7, setup-python v7.
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: pytest -q
+
+      # The eval gate is the CD guardrail: it FAILS the build (exit 1) if the
+      # golden-set pass rate drops below EVAL_PASS_THRESHOLD. A prompt/model
+      # regression cannot merge.
+      - name: Eval gate
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python -m app.evals.gate

@@ -1,0 +1,27 @@
+# Core runtime. Versions are the ones this scaffold was built and tested
+# against (Python 3.11+). Ranges keep it install-able without silent majors.
+
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+pydantic>=2.7,<3
+pydantic-settings>=2.3,<3
+
+# Agentic workflow engine.
+langgraph>=1.0,<2
+langchain-core>=1.0,<2
+
+# HTTP client used by FastAPI's TestClient (demo + tests) and the real
+# Anthropic/GitHub paths.
+httpx>=0.27,<1
+
+# Test runner.
+pytest>=8,<10
+
+# --- Optional, imported lazily; NOT required for the offline demo/tests -----
+# Real LLM paths (pick one via AGENT_PROVIDER + the matching key):
+#   AGENT_PROVIDER=anthropic  ANTHROPIC_API_KEY=...
+# anthropic>=0.40
+#   AGENT_PROVIDER=openai     OPENAI_API_KEY=...
+# openai>=1.40
+# Real LLM observability: set LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY.
+# langfuse>=2.0
